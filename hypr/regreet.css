@@ -1,0 +1,123 @@
+* {
+    outline-color: transparent;
+    caret-color: #cba6f7;
+    font-size: 12px;
+}
+
+window {
+    color: #cdd6f4;
+    background-color: rgba(17, 17, 27, 0.38);
+}
+
+window > box > *,
+window > box > box,
+window > box > centerbox,
+window > box > box > box {
+    background-color: rgba(49, 50, 68, 0.94);
+    border: 2px solid rgba(203, 166, 247, 0.82);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    padding: 6px 8px;
+    max-width: 360px;
+}
+
+label {
+    color: #f5e0dc;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+button,
+entry,
+combobox,
+dropdown,
+listview,
+popover {
+    border-radius: 10px;
+}
+
+button {
+    color: #f5e0dc;
+    background-image: none;
+    background-color: rgba(49, 50, 68, 0.94);
+    border: 1px solid rgba(203, 166, 247, 0.76);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.30);
+    padding: 4px 8px;
+    min-height: 0;
+}
+
+button:hover {
+    background-color: rgba(88, 91, 112, 0.98);
+    border-color: rgba(137, 180, 250, 0.96);
+}
+
+button:focus,
+button:active,
+button:checked {
+    background-color: rgba(88, 91, 112, 1.0);
+    border-color: rgba(137, 180, 250, 1.0);
+}
+
+entry,
+combobox,
+dropdown,
+listview,
+popover {
+    color: #cdd6f4;
+    background-color: rgba(49, 50, 68, 0.92);
+    border: 1px solid rgba(203, 166, 247, 0.58);
+    padding: 4px 8px;
+    min-height: 0;
+}
+
+entry:focus,
+combobox:focus,
+dropdown:focus {
+    border-color: rgba(137, 180, 250, 0.95);
+}
+
+menu,
+popover contents {
+    background-color: rgba(30, 30, 46, 0.96);
+    color: #cdd6f4;
+}
+
+window > box > box > label,
+window > box > centerbox label {
+    color: #f2cdcd;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    font-size: 14px;
+}
+
+window > box > box {
+    background-color: rgba(69, 71, 90, 0.92);
+}
+
+listview row,
+row,
+menuitem,
+popover menuitem,
+popover listview row,
+modelbutton {
+    border-style: none;
+    border-width: 0;
+    border-color: transparent;
+    box-shadow: none;
+    background-image: none;
+    border-radius: 8px;
+    padding: 4px 6px;
+}
+
+listview row:hover,
+row:hover,
+menuitem:hover,
+popover menuitem:hover,
+popover listview row:hover {
+    background-color: rgba(88, 91, 112, 0.72);
+}
+
+row:selected,
+listview row:selected {
+    background-color: rgba(137, 180, 250, 0.16);
+    color: #cdd6f4;
+}

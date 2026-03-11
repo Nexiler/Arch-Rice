@@ -1,0 +1,13 @@
+@import "~/.config/rofi/menu.rasi"
+
+window {
+    width:                       340px;
+}
+
+listview {
+    lines:                       5;
+}
+
+entry {
+    placeholder:                 "Choose power action...";
+}

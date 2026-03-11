@@ -1,0 +1,56 @@
+/* clipboard.rasi
+   Imports your launcher theme and tweaks spacing/size for clipboard history
+*/
+
+@import "~/.config/rofi/style.rasi"
+
+window {
+    /* Slightly wider so long clipboard lines are easier to read */
+    width:                       580px;
+
+    /* Keep same radius and border */
+    border-radius:               12px;
+    border:                      2px solid;
+}
+
+mainbox {
+    /* keep same padding but give a touch more breathing room */
+    padding:                     16px;
+    spacing:                     8px;
+}
+
+inputbar {
+    /* keep the same visual, but reduce vertical padding so more space for list */
+    padding:                     10px;
+}
+
+listview {
+    /* show more items and allow variable row heights so multiline clipboard entries wrap */
+    lines:                       12;
+    fixed-height:                false;   /* allow items to expand for multi-line entries */
+    dynamic:                     true;
+    spacing:                     8px;
+    scrollbar:                   true;    /* show scrollbar since history can be long */
+}
+
+element {
+    /* a bit more padding so each entry feels like a card and is easier to click */
+    padding:                     8px;
+    border-radius:               10px;
+    spacing:                     10px;
+}
+
+element-text {
+    /* keep typography identical, but nudge alignment for better vertical centering */
+    vertical-align:              0.35;
+    horizontal-align:            0.0;
+    /* allow wrapping in case entries have newlines */
+    wrap:                        true;
+}
+
+/* selected item contrast stays the same as launcher */
+element selected.normal {
+    background-color:            @selected;
+    text-color:                  #1e1e2e;
+}
+

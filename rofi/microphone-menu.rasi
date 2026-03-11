@@ -1,0 +1,13 @@
+@import "~/.config/rofi/menu.rasi"
+
+window {
+    width:                       460px;
+}
+
+listview {
+    lines:                       10;
+}
+
+entry {
+    placeholder:                 "Adjust microphone or pick input...";
+}

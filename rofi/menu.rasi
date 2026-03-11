@@ -1,0 +1,31 @@
+@import "~/.config/rofi/style.rasi"
+
+configuration {
+    show-icons: false;
+}
+
+window {
+    width:                       420px;
+    border:                      2px solid;
+    border-radius:               16px;
+}
+
+mainbox {
+    padding:                     16px;
+    spacing:                     10px;
+}
+
+inputbar {
+    padding:                     10px 12px;
+}
+
+listview {
+    lines:                       7;
+    spacing:                     8px;
+    fixed-height:                false;
+}
+
+element {
+    padding:                     9px;
+    border-radius:               12px;
+}
