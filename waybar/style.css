@@ -31,6 +31,7 @@
 }
 
 #cpu,
+#memory,
 #battery,
 #pulseaudio,
 #custom-microphone,
@@ -49,6 +50,10 @@
 
 #network {
   margin-right: 13px;
+}
+
+#network.drawer {
+  margin-right: 10px;
 }
 
 #custom-expand-icon {

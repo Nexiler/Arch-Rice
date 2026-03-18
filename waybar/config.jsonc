@@ -11,12 +11,12 @@
     "custom/bluetooth-init",
     "bluetooth",
     "network",
-    "custom/microphone",
+    "pulseaudio#microphone",
     "pulseaudio",
     "cpu",
+    "memory",
     "battery",
-    "custom/power",
-    "custom/battery-guard"
+    "custom/power"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -50,10 +50,16 @@
   },
 
   "cpu": {
-    "interval": 10,
+    "interval": 1,
     "format": "󰍛",
+    "tooltip-format": "CPU {usage}%",
     "on-click": "alacritty -e btop",
     "on-click-right": "alacritty"
+  },
+  "memory": {
+    "interval": 1,
+    "format": "",
+    "tooltip-format": "RAM {percentage}%\n{used:0.1f}G / {total:0.1f}G"
   },
   "clock": {
     "format": "{:L%A %H:%M}",
@@ -69,14 +75,34 @@
     "format-disconnected": "󰤮",
     "format-disabled": "󰤭",
     "tooltip-format": "{ifname} {ipaddr}/{cidr}",
-    "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% at {frequency} GHz\n{ipaddr}/{cidr}\nDown {bandwidthDownBytes}  Up {bandwidthUpBytes}",
-    "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}\nDown {bandwidthDownBytes}  Up {bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% ({signaldBm} dBm) at {frequency} GHz\n{ipaddr}/{cidr}",
+    "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}",
     "tooltip-format-linked": "{ifname}\nLink detected, waiting for IP",
     "tooltip-format-disconnected": "Network disconnected\nClick to open Wi-Fi",
     "tooltip-format-disabled": "Network disabled",
-    "interval": 5,
+    "interval": 1,
     "spacing": 1,
     "max-length": 1,
+    "on-click": "/home/fahad/.config/waybar/scripts/network-menu.sh",
+    "on-click-right": "/home/fahad/.config/waybar/scripts/network-toggle.sh"
+  },
+  "network#drawer": {
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format": "󰈀",
+    "format-wifi": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+    "format-ethernet": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+    "format-linked": "󰈀",
+    "format-disconnected": "󰤮",
+    "format-disabled": "󰤭",
+    "tooltip-format": "{ifname} {ipaddr}/{cidr}",
+    "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% ({signaldBm} dBm) at {frequency} GHz\n{ipaddr}/{cidr}",
+    "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}",
+    "tooltip-format-linked": "{ifname}\nLink detected, waiting for IP",
+    "tooltip-format-disconnected": "Network disconnected",
+    "tooltip-format-disabled": "Network disabled",
+    "interval": 1,
+    "spacing": 1,
+    "max-length": 28,
     "on-click": "/home/fahad/.config/waybar/scripts/network-menu.sh",
     "on-click-right": "/home/fahad/.config/waybar/scripts/network-toggle.sh"
   },
@@ -99,8 +125,7 @@
     "tooltip-format-full": "Battery full\nHealth {health}%\nCycles {cycles}",
     "interval": 10,
     "max-length": 1,
-    "on-click": "/home/fahad/.config/waybar/scripts/power-menu.sh",
-    "on-click-right": "/home/fahad/.config/waybar/scripts/power-menu.sh lock",
+    "on-click": "/home/fahad/.config/waybar/scripts/power-profile-menu.sh",
     "states": {
       "warning": 25,
       "critical": 15
@@ -123,8 +148,8 @@
     "tooltip-format-connected-battery": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "- {device_alias}",
     "tooltip-format-enumerate-connected-battery": "- {device_alias} {device_battery_percentage}%",
-    "on-click": "/home/fahad/.config/waybar/scripts/bluetooth-ui.sh",
-    "on-click-right": "/home/fahad/.config/waybar/scripts/bluetooth-menu.sh"
+    "on-click": "/home/fahad/.config/waybar/scripts/bluetooth-menu.sh",
+    "on-click-right": "/home/fahad/.config/waybar/scripts/bluetooth-ui.sh"
   },
   "pulseaudio": {
     "format": "{icon}",
@@ -139,16 +164,16 @@
       "default": ["", "", ""]
     }
   },
-  "custom/microphone": {
-    "exec": "/home/fahad/.config/waybar/scripts/microphone-status.sh",
-    "return-type": "json",
-    "interval": 5,
-    "signal": 11,
+  "pulseaudio#microphone": {
+    "format": "{format_source}",
+    "format-source": "",
+    "format-source-muted": "",
+    "tooltip-format": "Mic {volume}%",
+    "max-length": 1,
     "on-click": "/home/fahad/.config/waybar/scripts/microphone-menu.sh",
     "on-click-right": "/home/fahad/.config/waybar/scripts/microphone-menu.sh toggle",
     "on-scroll-up": "/home/fahad/.config/waybar/scripts/microphone-menu.sh up",
-    "on-scroll-down": "/home/fahad/.config/waybar/scripts/microphone-menu.sh down",
-    "tooltip": true
+    "on-scroll-down": "/home/fahad/.config/waybar/scripts/microphone-menu.sh down"
   },
   "group/tray-expander": {
     "orientation": "inherit",
@@ -156,7 +181,7 @@
       "transition-duration": 600,
       "children-class": "tray-group-item"
     },
-    "modules": ["custom/expand-icon", "tray"]
+    "modules": ["custom/expand-icon", "network#drawer", "tray"]
   },
   "custom/expand-icon": {
     "format": "",
@@ -169,21 +194,15 @@
   "custom/bluetooth-init": {
     "exec": "/home/fahad/.config/waybar/scripts/bluetooth-init-off.sh",
     "return-type": "json",
+    "interval": "once",
     "tooltip": false
   },
   "custom/power": {
-    "exec": "/home/fahad/.config/waybar/scripts/power-status.sh",
-    "return-type": "json",
-    "interval": 3600,
+    "exec": "printf '⏻\\n'",
+    "interval": "once",
+    "tooltip": false,
     "on-click": "/home/fahad/.config/waybar/scripts/power-menu.sh",
-    "on-click-right": "/home/fahad/.config/waybar/scripts/power-menu.sh lock",
-    "tooltip": true
-  },
-  "custom/battery-guard": {
-    "exec": "/home/fahad/.config/waybar/scripts/battery-guard.sh",
-    "return-type": "json",
-    "interval": 30,
-    "tooltip": false
+    "on-click-right": "/home/fahad/.config/waybar/scripts/power-menu.sh lock"
   },
   "tray": {
     "icon-size": 12,

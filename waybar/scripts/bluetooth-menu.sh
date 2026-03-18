@@ -18,7 +18,7 @@ choice="$(printf '%s\n' \
   "Open Bluetooth Manager" \
   "Open bluetoothctl" \
   "$toggle_label" \
-  "Adapters" | rofi -dmenu -i -p 'Bluetooth' -theme-str 'window {width: 26em;} listview {lines: 4;}')"
+  "Adapters" | rofi -dmenu -i -p 'Bluetooth' -theme ~/.config/rofi/power-menu.rasi -theme-str 'entry { placeholder: "Search Bluetooth actions..."; }')"
 
 case "$choice" in
   "Open Bluetooth Manager")
