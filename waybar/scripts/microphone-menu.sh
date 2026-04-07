@@ -7,13 +7,17 @@ refresh_waybar() {
 }
 
 choose_menu() {
+  local status="$1"
+
   if command -v rofi >/dev/null 2>&1; then
-    rofi -dmenu -i -p "Microphone" -theme ~/.config/rofi/microphone-menu.rasi
+    rofi -dmenu -i -p "Microphone" -mesg "$status" \
+      -theme ~/.config/rofi/microphone-menu.rasi \
+      -theme-str 'entry { enabled: false; } inputbar { enabled: false; } mainbox { children: [message, listview]; }'
     return
   fi
 
   if command -v wofi >/dev/null 2>&1; then
-    wofi --dmenu --prompt "Microphone"
+    wofi --dmenu --prompt "Microphone" --hide-search
     return
   fi
 
@@ -30,10 +34,12 @@ apply_action() {
       wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
       ;;
     up)
-      wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SOURCE@ 5%+
+      wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0
+      wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SOURCE@ 2%+
       ;;
     down)
-      wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-
+      wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0
+      wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 2%-
       ;;
     set-0)
       wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 0
@@ -77,8 +83,17 @@ mute_label="Mute"
 if [[ "$volume_line" == *"[MUTED]"* ]]; then
   mute_label="Unmute"
 fi
+volume_pct=$(awk '{ printf "%d", ($2 * 100) + 0.5 }' <<<"$volume_line" 2>/dev/null || printf '0')
+status_line="Current: ${volume_pct}%"
+if [[ "$mute_label" == "Unmute" ]]; then
+  status_line="Current: Muted (${volume_pct}%)"
+fi
+if [[ -n "$default_source" ]]; then
+  status_line+=" | ${default_source}"
+fi
 
 options=$(printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+  "$status_line" \
   "$mute_label" \
   "Volume 0%" \
   "Volume 25%" \
@@ -97,10 +112,13 @@ while IFS= read -r source_name; do
   options+=$(printf 'Source: %s%s\n' "$source_name" "$suffix")
 done < <(list_sources)
 
-selection=$(printf '%s' "$options" | choose_menu)
+selection=$(printf '%s' "$options" | choose_menu "$status_line")
 [[ -z "$selection" ]] && exit 0
 
 case "$selection" in
+  "$status_line")
+    exit 0
+    ;;
   Mute|Unmute)
     apply_action toggle
     ;;
