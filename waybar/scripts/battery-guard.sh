@@ -9,12 +9,26 @@ LAST_NOTIFY_FILE="$STATE_DIR/last_notify"
 SUSPEND_LOCK_FILE="$STATE_DIR/suspend_action_taken"
 POWEROFF_LOCK_FILE="$STATE_DIR/poweroff_action_taken"
 SUSPEND_MARKER_FILE="$PERSISTENT_STATE_DIR/suspended_once"
+LAST_POWER_STATE_FILE="$STATE_DIR/last_power_state"
+LAST_LEVEL_STATE_FILE="$STATE_DIR/last_level_state"
 
 LOW_BATTERY_WARN_THRESHOLD=25
 LOW_BATTERY_SUSPEND_THRESHOLD=20
 LOW_BATTERY_POWEROFF_THRESHOLD=15
 LOW_BATTERY_GRACE_SECONDS=20
 LOW_BATTERY_COOLDOWN_SECONDS=300
+
+BATTERY_SOUND_ENABLED=1
+BATTERY_SOUND_BACKEND="auto"
+BATTERY_SOUND_ON_STARTUP=0
+BATTERY_SOUND_EVENT_PLUGGED="power-plug"
+BATTERY_SOUND_EVENT_UNPLUGGED="power-unplug"
+BATTERY_SOUND_EVENT_LOW="battery-low"
+BATTERY_SOUND_EVENT_CRITICAL="battery-caution"
+BATTERY_SOUND_FILE_PLUGGED=""
+BATTERY_SOUND_FILE_UNPLUGGED=""
+BATTERY_SOUND_FILE_LOW=""
+BATTERY_SOUND_FILE_CRITICAL=""
 
 if [[ -f "$POLICY_FILE" ]]; then
   # shellcheck disable=SC1090
@@ -40,6 +54,43 @@ send_notification() {
   if have_cmd notify-send; then
     notify-send -u "$urgency" "$title" "$body" || true
   fi
+}
+
+play_sound() {
+  local event_id="$1"
+  local file_path="${2:-}"
+
+  if [[ "${BATTERY_SOUND_ENABLED}" != "1" ]]; then
+    return
+  fi
+
+  case "$BATTERY_SOUND_BACKEND" in
+    auto)
+      if have_cmd canberra-gtk-play; then
+        if [[ -n "$event_id" ]]; then
+          canberra-gtk-play -i "$event_id" >/dev/null 2>&1 || true
+          return
+        fi
+      fi
+      if have_cmd paplay && [[ -n "$file_path" && -r "$file_path" ]]; then
+        paplay "$file_path" >/dev/null 2>&1 || true
+      fi
+      ;;
+    canberra)
+      if have_cmd canberra-gtk-play && [[ -n "$event_id" ]]; then
+        canberra-gtk-play -i "$event_id" >/dev/null 2>&1 || true
+      fi
+      ;;
+    paplay)
+      if have_cmd paplay && [[ -n "$file_path" && -r "$file_path" ]]; then
+        paplay "$file_path" >/dev/null 2>&1 || true
+      fi
+      ;;
+    none)
+      ;;
+    *)
+      ;;
+  esac
 }
 
 read_battery_status() {
@@ -81,6 +132,107 @@ is_discharging_state() {
       ;;
     *)
       return 1
+      ;;
+  esac
+}
+
+power_state_bucket() {
+  case "$1" in
+    charging|fully-charged|pending-charge)
+      printf 'plugged\n'
+      ;;
+    discharging|pending-discharge)
+      printf 'unplugged\n'
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
+battery_level_bucket() {
+  local capacity="$1"
+  if (( capacity <= LOW_BATTERY_POWEROFF_THRESHOLD )); then
+    printf 'critical\n'
+  elif (( capacity <= LOW_BATTERY_WARN_THRESHOLD )); then
+    printf 'low\n'
+  else
+    printf 'normal\n'
+  fi
+}
+
+handle_power_state_sound() {
+  local state="$1"
+  local bucket last_bucket
+
+  bucket="$(power_state_bucket "$state")"
+  if [[ "$bucket" == "unknown" ]]; then
+    return
+  fi
+
+  last_bucket=""
+  if [[ -f "$LAST_POWER_STATE_FILE" ]]; then
+    last_bucket="$(cat "$LAST_POWER_STATE_FILE" 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$last_bucket" ]]; then
+    printf '%s\n' "$bucket" >"$LAST_POWER_STATE_FILE"
+    if [[ "$BATTERY_SOUND_ON_STARTUP" == "1" ]]; then
+      if [[ "$bucket" == "plugged" ]]; then
+        play_sound "$BATTERY_SOUND_EVENT_PLUGGED" "$BATTERY_SOUND_FILE_PLUGGED"
+      else
+        play_sound "$BATTERY_SOUND_EVENT_UNPLUGGED" "$BATTERY_SOUND_FILE_UNPLUGGED"
+      fi
+    fi
+    return
+  fi
+
+  if [[ "$bucket" == "$last_bucket" ]]; then
+    return
+  fi
+
+  printf '%s\n' "$bucket" >"$LAST_POWER_STATE_FILE"
+  if [[ "$bucket" == "plugged" ]]; then
+    play_sound "$BATTERY_SOUND_EVENT_PLUGGED" "$BATTERY_SOUND_FILE_PLUGGED"
+  else
+    play_sound "$BATTERY_SOUND_EVENT_UNPLUGGED" "$BATTERY_SOUND_FILE_UNPLUGGED"
+  fi
+}
+
+handle_level_state_sound() {
+  local capacity="$1"
+  local state="$2"
+  local bucket last_bucket
+
+  if ! is_discharging_state "$state"; then
+    printf 'normal\n' >"$LAST_LEVEL_STATE_FILE"
+    return
+  fi
+
+  bucket="$(battery_level_bucket "$capacity")"
+  last_bucket=""
+  if [[ -f "$LAST_LEVEL_STATE_FILE" ]]; then
+    last_bucket="$(cat "$LAST_LEVEL_STATE_FILE" 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$last_bucket" ]]; then
+    printf '%s\n' "$bucket" >"$LAST_LEVEL_STATE_FILE"
+    return
+  fi
+
+  if [[ "$bucket" == "$last_bucket" ]]; then
+    return
+  fi
+
+  printf '%s\n' "$bucket" >"$LAST_LEVEL_STATE_FILE"
+  case "$bucket" in
+    low)
+      play_sound "$BATTERY_SOUND_EVENT_LOW" "$BATTERY_SOUND_FILE_LOW"
+      ;;
+    critical)
+      play_sound "$BATTERY_SOUND_EVENT_CRITICAL" "$BATTERY_SOUND_FILE_CRITICAL"
+      ;;
+    *)
       ;;
   esac
 }
@@ -149,6 +301,9 @@ evaluate_battery() {
   if ! [[ "$capacity" =~ ^[0-9]+$ ]]; then
     return
   fi
+
+  handle_power_state_sound "$state"
+  handle_level_state_sound "$capacity" "$state"
 
   if ! is_discharging_state "$state"; then
     clear_suspend_lock
