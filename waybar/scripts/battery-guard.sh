@@ -59,21 +59,62 @@ send_notification() {
 play_sound() {
   local event_id="$1"
   local file_path="${2:-}"
+  local default_file=""
 
   if [[ "${BATTERY_SOUND_ENABLED}" != "1" ]]; then
     return
   fi
 
+  resolve_default_sound_file() {
+    case "$1" in
+      power-plug)
+        printf '/usr/share/sounds/freedesktop/stereo/power-plug.oga\n'
+        ;;
+      power-unplug)
+        printf '/usr/share/sounds/freedesktop/stereo/power-unplug.oga\n'
+        ;;
+      battery-low|battery-caution)
+        printf '/usr/share/sounds/freedesktop/stereo/dialog-warning.oga\n'
+        ;;
+      *)
+        printf '\n'
+        ;;
+    esac
+  }
+
+  play_audio_file() {
+    local path="$1"
+
+    if [[ -z "$path" || ! -r "$path" ]]; then
+      return 1
+    fi
+
+    if have_cmd paplay; then
+      paplay "$path" >/dev/null 2>&1 && return 0
+    fi
+
+    if have_cmd pw-play; then
+      pw-play "$path" >/dev/null 2>&1 && return 0
+    fi
+
+    return 1
+  }
+
+  default_file="$(resolve_default_sound_file "$event_id")"
+
   case "$BATTERY_SOUND_BACKEND" in
     auto)
       if have_cmd canberra-gtk-play; then
         if [[ -n "$event_id" ]]; then
-          canberra-gtk-play -i "$event_id" >/dev/null 2>&1 || true
-          return
+          canberra-gtk-play -i "$event_id" >/dev/null 2>&1 && return
         fi
       fi
-      if have_cmd paplay && [[ -n "$file_path" && -r "$file_path" ]]; then
-        paplay "$file_path" >/dev/null 2>&1 || true
+
+      play_audio_file "$file_path" && return
+      play_audio_file "$default_file" && return
+
+      if have_cmd canberra-gtk-play; then
+        canberra-gtk-play -i "dialog-warning" >/dev/null 2>&1 || true
       fi
       ;;
     canberra)
@@ -82,9 +123,7 @@ play_sound() {
       fi
       ;;
     paplay)
-      if have_cmd paplay && [[ -n "$file_path" && -r "$file_path" ]]; then
-        paplay "$file_path" >/dev/null 2>&1 || true
-      fi
+      play_audio_file "$file_path" || play_audio_file "$default_file" || true
       ;;
     none)
       ;;

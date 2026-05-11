@@ -34,10 +34,36 @@
 #memory,
 #battery,
 #pulseaudio,
+#custom-misc-menu,
 #custom-microphone,
 #custom-power {
   min-width: 12px;
   margin: 0 7.5px;
+}
+
+#workspaces button:hover,
+#workspaces button.active:hover,
+#workspaces button.visible:hover,
+#workspaces button.empty:hover,
+#cpu:hover,
+#memory:hover,
+#battery:hover,
+#pulseaudio:hover,
+#pulseaudio.microphone:hover,
+#custom-microphone:hover,
+#custom-misc-menu:hover,
+#custom-power:hover,
+#network:hover,
+#bluetooth:hover,
+#custom-expand-icon:hover,
+#tray > .passive:hover,
+#tray > .active:hover,
+#tray > .needs-attention:hover {
+  color: @hover-accent;
+}
+
+#workspaces button.empty:hover {
+  opacity: 1;
 }
 
 #tray {
@@ -46,6 +72,10 @@
 
 #bluetooth {
   margin-right: 17px;
+}
+
+#custom-misc-menu {
+  margin-right: 2px;
 }
 
 #network {

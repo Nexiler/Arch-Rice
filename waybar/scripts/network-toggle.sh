@@ -6,10 +6,10 @@ if ! command -v nmcli >/dev/null 2>&1; then
   exit 0
 fi
 
-networking_state="$(nmcli -t -f NETWORKING general status 2>/dev/null | head -n 1 || true)"
+wifi_state="$(nmcli radio wifi 2>/dev/null | awk 'NR==1 { print tolower($0) }')"
 
-if [[ "$networking_state" == "enabled" ]]; then
-  exec nmcli networking off
+if [[ "$wifi_state" == "enabled" ]]; then
+  exec nmcli radio wifi off
 fi
 
-exec nmcli networking on
+exec nmcli radio wifi on

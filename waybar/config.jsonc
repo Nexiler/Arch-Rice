@@ -17,6 +17,7 @@
     "cpu",
     "memory",
     "battery",
+    "custom/misc-menu",
     "custom/power"
   ],
   "hyprland/workspaces": {
@@ -74,10 +75,9 @@
     "format-wifi": "{icon}",
     "format-ethernet": "󰈀",
     "format-linked": "󰈀",
-    "format-disconnected": "󰤮",
+    "format-disconnected": "󱚼",
     "format-disabled": "󰤭",
     "tooltip-format": "{ifname} {ipaddr}/{cidr}",
-    "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% ({signaldBm} dBm) at {frequency} GHz\n{ipaddr}/{cidr}\n{bandwidthDownBytes}\n{bandwidthUpBytes}\n{bandwidthTotalBytes}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}",
     "tooltip-format-linked": "{ifname}\nLink detected, waiting for IP",
     "tooltip-format-disconnected": "Network disconnected\nClick to open Wi-Fi",
@@ -94,7 +94,7 @@
     "format-wifi": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
     "format-ethernet": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
     "format-linked": "󰈀",
-    "format-disconnected": "󰤮",
+    "format-disconnected": "󰤨",
     "format-disabled": "󰤭",
     "tooltip-format": "{ifname} {ipaddr}/{cidr}",
     "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% ({signaldBm} dBm) at {frequency} GHz\n{ipaddr}/{cidr}",
@@ -215,6 +215,12 @@
     "tooltip": false,
     "on-click": "/home/fahad/.config/waybar/scripts/power-menu.sh",
     "on-click-right": "/home/fahad/.config/waybar/scripts/power-menu.sh lock"
+  },
+  "custom/misc-menu": {
+    "exec": "printf '󰍜\\n'",
+    "interval": "once",
+    "tooltip": false,
+    "on-click": "/home/fahad/.config/waybar/scripts/misc-menu.sh"
   },
   "tray": {
     "icon-size": 12,
