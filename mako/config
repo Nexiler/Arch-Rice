@@ -23,4 +23,5 @@ sort=-time
 layer=overlay
 anchor=top-right
 format=%s\n%b
-on-button-left=dismiss
+on-button-left=invoke
+on-button-right=dismiss

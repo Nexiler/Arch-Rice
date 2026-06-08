@@ -51,18 +51,18 @@ get_power_profile() {
   fi
 
   case "$(powerprofilesctl get 2>/dev/null || true)" in
-    power-saver)
-      printf 'Power Saver'
-      ;;
-    balanced)
-      printf 'Balanced'
-      ;;
-    performance)
-      printf 'Performance'
-      ;;
-    *)
-      printf 'Unknown'
-      ;;
+  power-saver)
+    printf 'Power Saver'
+    ;;
+  balanced)
+    printf 'Balanced'
+    ;;
+  performance)
+    printf 'Performance'
+    ;;
+  *)
+    printf 'Unknown'
+    ;;
   esac
 }
 
@@ -144,6 +144,15 @@ open_audio_mixer() {
   notify_error "pavucontrol is not installed"
 }
 
+open_youtube_downloader() {
+  if [[ -x "/opt/Scripts/menu.sh" ]]; then
+    kitty -e "/opt/Scripts/menu.sh" &
+    return
+  fi
+
+  notify_error "Youtube Downloader script not found"
+}
+
 set_power_profile() {
   local mode="$1"
 
@@ -205,6 +214,7 @@ print_rofi_menu() {
 
   print_rofi_separator "──────── Quick Access ────────"
   print_rofi_row "󰖩  Network Manager" "open_network"
+  print_rofi_row "󰖩  Youtube Downloader" "open_youtube_downloader"
   print_rofi_row "󰂯  Bluetooth Manager" "open_bluetooth"
   print_rofi_row "󰕾  Audio Mixer" "open_audio"
   print_rofi_row "󰅖  Close" "close"
@@ -244,6 +254,7 @@ menu_lines_plain() {
     "󰓅  Set: Performance" \
     "──────── Quick Access ────────" \
     "󰖩  Network Manager" \
+    "󰖩  Youtube Downloader" \
     "󰂯  Bluetooth Manager" \
     "󰕾  Audio Mixer" \
     "󰅖  Close"
@@ -251,33 +262,36 @@ menu_lines_plain() {
 
 apply_action() {
   case "$1" in
-    toggle_wifi)
-      toggle_wifi
-      ;;
-    toggle_bluetooth)
-      toggle_bluetooth
-      ;;
-    toggle_mic)
-      toggle_mic
-      ;;
-    power_saver)
-      set_power_profile power-saver
-      ;;
-    power_balanced)
-      set_power_profile balanced
-      ;;
-    power_performance)
-      set_power_profile performance
-      ;;
-    open_network)
-      open_network_manager
-      ;;
-    open_bluetooth)
-      open_bluetooth_manager
-      ;;
-    open_audio)
-      open_audio_mixer
-      ;;
+  toggle_wifi)
+    toggle_wifi
+    ;;
+  toggle_bluetooth)
+    toggle_bluetooth
+    ;;
+  toggle_mic)
+    toggle_mic
+    ;;
+  power_saver)
+    set_power_profile power-saver
+    ;;
+  power_balanced)
+    set_power_profile balanced
+    ;;
+  power_performance)
+    set_power_profile performance
+    ;;
+  open_network)
+    open_network_manager
+    ;;
+  open_youtube_downloader)
+    open_youtube_downloader
+    ;;
+  open_bluetooth)
+    open_bluetooth_manager
+    ;;
+  open_audio)
+    open_audio_mixer
+    ;;
   esac
 }
 
@@ -291,9 +305,9 @@ run_rofi_mode() {
     fi
 
     case "$action" in
-      open_network|open_bluetooth|open_audio)
-        close_after_action="1"
-        ;;
+    open_network | open_bluetooth | open_audio | open_youtube_downloader)
+      close_after_action="1"
+      ;;
     esac
 
     if [[ "$action" != "noop" ]]; then
@@ -316,17 +330,18 @@ run_wofi_fallback() {
     [[ -z "$choice" ]] && exit 0
 
     case "$choice" in
-      *Toggle\ Wi-Fi*) apply_action toggle_wifi ;;
-      *Toggle\ Bluetooth*) apply_action toggle_bluetooth ;;
-      *Toggle\ Microphone*) apply_action toggle_mic ;;
-      *Set:\ Power\ Saver*) apply_action power_saver ;;
-      *Set:\ Balanced*) apply_action power_balanced ;;
-      *Set:\ Performance*) apply_action power_performance ;;
-      *Network\ Manager*) apply_action open_network ;;
-      *Bluetooth\ Manager*) apply_action open_bluetooth ;;
-      *Audio\ Mixer*) apply_action open_audio ;;
-      *Close*|*────*) exit 0 ;;
-      *) ;;
+    *Toggle\ Wi-Fi*) apply_action toggle_wifi ;;
+    *Toggle\ Bluetooth*) apply_action toggle_bluetooth ;;
+    *Toggle\ Microphone*) apply_action toggle_mic ;;
+    *Set:\ Power\ Saver*) apply_action power_saver ;;
+    *Set:\ Balanced*) apply_action power_balanced ;;
+    *Set:\ Performance*) apply_action power_performance ;;
+    *Network\ Manager*) apply_action open_network ;;
+    *Youtube\ Downloader*) apply_action open_youtube_downloader ;;
+    *Bluetooth\ Manager*) apply_action open_bluetooth ;;
+    *Audio\ Mixer*) apply_action open_audio ;;
+    *Close* | *────*) exit 0 ;;
+    *) ;;
     esac
   done
 }
