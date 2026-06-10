@@ -1,5 +1,0 @@
-power on
-pairable on
-discoverable on
-default-agent
-scan on

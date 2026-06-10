@@ -4,27 +4,35 @@
   "position": "top",
   "spacing": 0,
   "height": 26,
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["clock"],
+  "modules-left": [
+    "hyprland/workspaces",
+    "custom/separator",
+    "wlr/taskbar"
+  ],
+  "modules-center": [
+    "clock"
+  ],
   "modules-right": [
     "group/tray-expander",
     "custom/battery-guard",
-    "custom/bluetooth-init",
-    "bluetooth",
     "network",
-    "pulseaudio#microphone",
-    "pulseaudio",
+    "bluetooth",
+    "custom/separator",
+    "power-profiles-daemon",
     "cpu",
     "memory",
+    "custom/separator",
+    "pulseaudio#microphone",
+    "pulseaudio",
+    "custom/separator",
     "battery",
-    "custom/misc-menu",
     "custom/power"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
-      "default": "",
+      "default": "\uea71",
       "1": "1",
       "2": "2",
       "3": "3",
@@ -35,7 +43,7 @@
       "8": "8",
       "9": "9",
       "10": "10",
-      "active": "󱓻"
+      "active": "\udb85\udcfb"
     },
     "persistent-workspaces": {
       "1": [],
@@ -50,17 +58,16 @@
       "10": []
     }
   },
-
   "cpu": {
     "interval": 1,
-    "format": "󰍛",
+    "format": "\udb80\udf5b {usage}%",
     "tooltip-format": "CPU {usage}%",
     "on-click": "alacritty -e btop",
     "on-click-right": "alacritty"
   },
   "memory": {
     "interval": 1,
-    "format": "",
+    "format": "\uefc5 {percentage}%",
     "tooltip-format": "RAM {percentage}%\n{used:0.1f}G / {total:0.1f}G"
   },
   "clock": {
@@ -70,13 +77,19 @@
     "tooltip": false
   },
   "network": {
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-    "format": "󰈀",
-    "format-wifi": "{icon}",
-    "format-ethernet": "󰈀",
-    "format-linked": "󰈀",
-    "format-disconnected": "󱚼",
-    "format-disabled": "󰤭",
+    "format-icons": [
+      "\udb82\udd2f",
+      "\udb82\udd1f",
+      "\udb82\udd22",
+      "\udb82\udd25",
+      "\udb82\udd28"
+    ],
+    "format": "\udb80\ude00",
+    "format-wifi": "{icon} \u2193{bandwidthDownBytes} \u2191{bandwidthUpBytes}",
+    "format-ethernet": "\udb80\ude00 \u2193{bandwidthDownBytes} \u2191{bandwidthUpBytes}",
+    "format-linked": "\udb80\ude00",
+    "format-disconnected": "\udb85\udebc",
+    "format-disabled": "\udb82\udd2d",
     "tooltip-format": "{ifname} {ipaddr}/{cidr}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}",
     "tooltip-format-linked": "{ifname}\nLink detected, waiting for IP",
@@ -84,18 +97,23 @@
     "tooltip-format-disabled": "Network disabled",
     "interval": 1,
     "spacing": 1,
-    "max-length": 1,
     "on-click": "/home/fahad/.config/waybar/scripts/network-menu.sh",
     "on-click-right": "/home/fahad/.config/waybar/scripts/network-toggle.sh"
   },
   "network#drawer": {
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-    "format": "󰈀",
-    "format-wifi": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
-    "format-ethernet": "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
-    "format-linked": "󰈀",
-    "format-disconnected": "󰤨",
-    "format-disabled": "󰤭",
+    "format-icons": [
+      "\udb82\udd2f",
+      "\udb82\udd1f",
+      "\udb82\udd22",
+      "\udb82\udd25",
+      "\udb82\udd28"
+    ],
+    "format": "\udb80\ude00",
+    "format-wifi": "\udb82\udd28",
+    "format-ethernet": "\udb80\ude00",
+    "format-linked": "\udb80\ude00",
+    "format-disconnected": "\udb82\udd28",
+    "format-disabled": "\udb82\udd2d",
     "tooltip-format": "{ifname} {ipaddr}/{cidr}",
     "tooltip-format-wifi": "{essid}\nSignal {signalStrength}% ({signaldBm} dBm) at {frequency} GHz\n{ipaddr}/{cidr}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\nGateway {gwaddr}",
@@ -111,15 +129,37 @@
   "battery": {
     "format": "{icon}",
     "format-discharging": "{icon}",
-    "format-charging": "󰂄",
-    "format-plugged": "",
+    "format-charging": "\udb80\udc84",
+    "format-plugged": "\uf1e6",
     "format-icons": {
-      "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
-      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+      "charging": [
+        "\udb82\udc9c",
+        "\udb80\udc86",
+        "\udb80\udc87",
+        "\udb80\udc88",
+        "\udb82\udc9d",
+        "\udb80\udc89",
+        "\udb82\udc9e",
+        "\udb80\udc8a",
+        "\udb80\udc8b",
+        "\udb80\udc85"
+      ],
+      "default": [
+        "\udb80\udc7a",
+        "\udb80\udc7b",
+        "\udb80\udc7c",
+        "\udb80\udc7d",
+        "\udb80\udc7e",
+        "\udb80\udc7f",
+        "\udb80\udc80",
+        "\udb80\udc81",
+        "\udb80\udc82",
+        "\udb80\udc79"
+      ]
     },
-    "format-full": "󰂅",
+    "format-full": "\udb80\udc85",
     "format-warning": "{icon}",
-    "format-critical": "󰂎",
+    "format-critical": "\udb80\udc8e",
     "format-time": "{H}h {m}m",
     "tooltip-format": "{timeTo}\nCharge {capacity}%\nHealth {health}%\nCycles {cycles}",
     "tooltip-format-discharging": "{timeTo}\nDraw {power:>1.1f}W\nCharge {capacity}%\nHealth {health}%\nCycles {cycles}",
@@ -134,12 +174,12 @@
     }
   },
   "bluetooth": {
-    "format": "",
-    "format-off": "󰂲",
-    "format-disabled": "󰂲",
-    "format-on": "",
-    "format-connected": "",
-    "format-connected-battery": "",
+    "format": "\uf294",
+    "format-off": "\udb80\udcb2",
+    "format-disabled": "\udb80\udcb2",
+    "format-on": "\uf294",
+    "format-connected": "\uf294",
+    "format-connected-battery": "\uf294",
     "format-no-controller": "",
     "max-length": 1,
     "tooltip-format": "{controller_alias}\n{num_connections} connected",
@@ -150,8 +190,8 @@
     "tooltip-format-connected-battery": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "- {device_alias}",
     "tooltip-format-enumerate-connected-battery": "- {device_alias} {device_battery_percentage}%",
-    "on-click": "/home/fahad/.config/waybar/scripts/bluetooth-menu.sh",
-    "on-click-right": "/home/fahad/.config/waybar/scripts/bluetooth-ui.sh"
+    "on-click": "/home/fahad/.config/waybar/scripts/bluetooth-toggle.sh",
+    "on-click-right": "overskride"
   },
   "pulseaudio": {
     "format": "{icon}",
@@ -162,17 +202,21 @@
     "scroll-step": 5,
     "smooth-scrolling-threshold": 1.0,
     "max-volume": 100,
-    "format-muted": "",
+    "format-muted": "\ueee8",
     "format-icons": {
-      "headphone": "",
-      "headset": "",
-      "default": ["", "", ""]
+      "headphone": "\uf025",
+      "headset": "\uf025",
+      "default": [
+        "\uf026",
+        "\uf027",
+        "\uf028"
+      ]
     }
   },
   "pulseaudio#microphone": {
     "format": "{format_source}",
-    "format-source": "",
-    "format-source-muted": "",
+    "format-source": "\uf130",
+    "format-source-muted": "\uf131",
     "tooltip-format-source": "Mic {volume}%",
     "tooltip-format-source-muted": "Mic muted",
     "max-length": 1,
@@ -187,21 +231,18 @@
       "transition-duration": 600,
       "children-class": "tray-group-item"
     },
-    "modules": ["custom/expand-icon", "network#drawer", "tray"]
+    "modules": [
+      "custom/expand-icon",
+      "tray"
+    ]
   },
   "custom/expand-icon": {
-    "format": "",
+    "format": "\uf053",
     "tooltip": false,
     "on-scroll-up": "",
     "on-scroll-down": "",
     "on-scroll-left": "",
     "on-scroll-right": ""
-  },
-  "custom/bluetooth-init": {
-    "exec": "/home/fahad/.config/waybar/scripts/bluetooth-init-off.sh",
-    "return-type": "json",
-    "interval": "once",
-    "tooltip": false
   },
   "custom/battery-guard": {
     "exec": "/home/fahad/.config/waybar/scripts/battery-guard-init.sh",
@@ -210,20 +251,37 @@
     "tooltip": false
   },
   "custom/power": {
-    "exec": "printf '⏻\\n'",
+    "exec": "printf '\u23fb\\n'",
     "interval": "once",
     "tooltip": false,
     "on-click": "/home/fahad/.config/waybar/scripts/power-menu.sh",
     "on-click-right": "/home/fahad/.config/waybar/scripts/power-menu.sh lock"
   },
-  "custom/misc-menu": {
-    "exec": "printf '󰍜\\n'",
-    "interval": "once",
-    "tooltip": false,
-    "on-click": "/home/fahad/.config/waybar/scripts/misc-menu.sh"
-  },
   "tray": {
     "icon-size": 12,
     "spacing": 17
+  },
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 14,
+    "icon-theme": "Papirus",
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close"
+  },
+  "custom/separator": {
+    "format": "|",
+    "tooltip": false
+  },
+  "power-profiles-daemon": {
+    "format": "{icon} {profile}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "\udb81\udcc5",
+      "performance": "\udb81\udcc5",
+      "balanced": "\udb83\udf85",
+      "power-saver": "\udb83\udf86"
+    }
   }
 }

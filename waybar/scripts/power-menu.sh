@@ -3,7 +3,6 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-BT_SLEEP_HOOK="$SCRIPT_DIR/bluetooth-sleep-hook.sh"
 
 lock_screen() {
   if command -v hyprlock >/dev/null 2>&1; then
