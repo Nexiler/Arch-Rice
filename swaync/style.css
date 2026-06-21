@@ -1,0 +1,475 @@
+/* ============================================================
+   SwayNC — "Mocha Glass" theme
+   Built to match your Hyprland look-and-feel.conf:
+     - Catppuccin Mocha palette
+     - Mauve -> Blue gradient accent (same as col.active_border)
+     - Soft blur + light transparency (same spirit as decoration.blur)
+   Big, readable type. Frosted glass cards. Rounded, not bubbly.
+   ============================================================ */
+
+/* ---------- Palette (Catppuccin Mocha) ---------- */
+@define-color base       #1e1e2e;
+@define-color mantle      #181825;
+@define-color crust       #11111b;
+@define-color surface0    #313244;
+@define-color surface1    #45475a;
+@define-color surface2    #585b70;
+@define-color overlay0    #6c7086;
+@define-color overlay1    #7f849c;
+@define-color overlay2    #9399b2;
+@define-color subtext0    #a6adc8;
+@define-color subtext1    #bac2de;
+@define-color text        #cdd6f4;
+@define-color rosewater   #f5e0dc;
+@define-color pink        #f5c2e7;
+@define-color mauve       #cba6f7;
+@define-color red         #f38ba8;
+@define-color maroon      #eba0ac;
+@define-color peach       #fab387;
+@define-color yellow      #f9e2af;
+@define-color green       #a6e3a1;
+@define-color teal        #94e2d5;
+@define-color sky         #89dceb;
+@define-color sapphire    #74c7ec;
+@define-color blue        #89b4fa;
+@define-color lavender    #b4befe;
+
+/* ---------- Type ----------
+   Adjust the family list here if you have a font you prefer installed.
+   Everything below falls back gracefully if "Inter" isn't on your system. */
+* {
+  font-family: "Inter", "Rubik", "Cantarell", "Noto Sans", sans-serif;
+}
+
+/* ---------- Root windows: stay fully transparent ----------
+   The compositor (Hyprland) paints the blur + tint. GTK must not
+   add its own opaque background or the blur/transparency breaks. */
+window,
+#notification-window,
+#control-center,
+.blank-window,
+.floating-notifications {
+  background: transparent;
+  background-color: transparent;
+}
+
+/* The full-screen click-catcher behind the control center.
+   Must stay perfectly invisible, otherwise the layer-rule "blur"
+   on Hyprland's side will visibly tint your whole screen. */
+.blank-window {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+tooltip {
+  background-color: alpha(@mantle, 0.92);
+  color: @text;
+  border: 1px solid alpha(@mauve, 0.35);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* =========================================================
+   NOTIFICATION POPUPS (floating toasts)
+   ========================================================= */
+
+/* GTK4 gives listview rows their own default background. Left alone,
+   that sits underneath our card and looks like "a box inside a box".
+   Kill it so the only visible rectangle is the one below. */
+list,
+listview,
+row,
+listview row,
+listview row:selected,
+listview row:hover,
+listview row:focus,
+listview row:active {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.notification-row {
+  background: transparent;
+  padding: 3px 5px;
+}
+
+/* One flat, simple rectangle: a single transparent dark fill,
+   a hairline border, rounded corners. No gradient, no inner glow. */
+.notification {
+  background-color: alpha(@base, 0.5);
+  background-image: none;
+  border-radius: 12px;
+  border: 1px solid alpha(@crust, 0.55);
+  box-shadow: none;
+  transition: background-color 120ms ease;
+}
+
+/* Hover: the *same* dark color family, just a touch lighter/more
+   opaque — not a different, brighter color. */
+.notification:hover {
+  background-color: alpha(@surface0, 0.55);
+}
+
+/* Urgency: only critical gets a color cue. Normal/low stay neutral. */
+.notification.critical {
+  border-left: 3px solid @red;
+}
+.notification.low {
+  opacity: 0.9;
+}
+
+.notification-content {
+  padding: 8px 10px;
+}
+
+.notification-icon,
+.image {
+  border-radius: 9px;
+  -gtk-icon-size: 28px;
+}
+
+.app-icon {
+  border-radius: 8px;
+  background-color: alpha(@surface0, 0.4);
+  padding: 4px;
+}
+
+.app-name {
+  color: @subtext0;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.summary {
+  color: @text;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.body {
+  color: @subtext1;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.time {
+  color: @overlay1;
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+/* Close ("x") button — dark-on-dark, with just a hint of red on the
+   icon itself rather than flooding the button with color. */
+.close-button {
+  background-color: alpha(@surface1, 0.4);
+  color: @subtext1;
+  border-radius: 999px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  border: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.close-button:hover {
+  background-color: alpha(@surface1, 0.75);
+  color: @red;
+}
+
+/* Alternative action buttons row ("Reply", "Mark read", etc.) */
+.notification-action,
+.notification-default-action {
+  background-color: alpha(@surface0, 0.4);
+  color: @text;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: 6px 10px;
+  border: 1px solid alpha(@crust, 0.4);
+  transition: background-color 120ms ease;
+}
+.notification-action:hover,
+.notification-default-action:hover {
+  background-color: alpha(@surface1, 0.7);
+}
+
+/* Inline reply field */
+.inline-reply entry {
+  background-color: alpha(@surface0, 0.4);
+  color: @text;
+  border-radius: 9px;
+  border: 1px solid alpha(@crust, 0.4);
+  padding: 6px 8px;
+  font-size: 12px;
+}
+.inline-reply button {
+  background-color: alpha(@surface1, 0.55);
+  color: @text;
+  border-radius: 9px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+.inline-reply button:hover {
+  background-color: alpha(@surface1, 0.85);
+}
+
+/* Grouped notifications */
+.notification-group {
+  background-color: alpha(@mantle, 0.3);
+  border-radius: 12px;
+  margin: 3px 2px;
+}
+.notification-group-headers {
+  color: @subtext0;
+  font-weight: 700;
+  font-size: 11px;
+}
+.notification-group-icon {
+  color: @overlay1;
+}
+
+/* =========================================================
+   CONTROL CENTER (the panel)
+   ========================================================= */
+
+#control-center,
+.control-center {
+  background-color: alpha(@base, 0.62);
+  background-image: linear-gradient(160deg, alpha(@mauve, 0.08), alpha(@blue, 0.05) 60%, transparent);
+  border-radius: 22px;
+  border: 1px solid alpha(@mauve, 0.22);
+  box-shadow:
+    0 24px 60px alpha(@crust, 0.6),
+    0 0 0 1px alpha(@base, 0.35) inset;
+  padding: 14px;
+}
+
+.control-center-list {
+  background: transparent;
+}
+.control-center-list row {
+  background: transparent;
+  padding: 4px 0;
+}
+
+.control-center-list-placeholder {
+  color: @overlay1;
+}
+.control-center-list-placeholder image {
+  color: @surface2;
+  -gtk-icon-size: 56px;
+  margin-bottom: 8px;
+}
+.control-center-list-placeholder label {
+  font-size: 15px;
+  font-weight: 600;
+  color: @overlay1;
+}
+
+/* Scrollbar */
+scrollbar {
+  background: transparent;
+}
+scrollbar slider {
+  background-color: alpha(@surface2, 0.7);
+  border-radius: 999px;
+  min-width: 6px;
+  min-height: 6px;
+}
+scrollbar slider:hover {
+  background-color: alpha(@mauve, 0.6);
+}
+
+/* ---- Title widget: "Notifications" + Clear All ---- */
+.widget-title {
+  padding: 6px 10px 14px 10px;
+  border-bottom: 1px solid alpha(@mauve, 0.15);
+  margin-bottom: 10px;
+}
+.widget-title > label {
+  color: @text;
+  font-size: 21px;
+  font-weight: 800;
+}
+.widget-title button {
+  background-color: alpha(@surface0, 0.7);
+  color: @mauve;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 999px;
+  padding: 6px 14px;
+  border: 1px solid alpha(@mauve, 0.25);
+}
+.widget-title button:hover {
+  background-image: linear-gradient(135deg, @mauve, @blue);
+  color: @crust;
+}
+
+/* ---- Generic section label widget ---- */
+.widget-label {
+  color: @subtext0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  margin: 10px 4px 4px 4px;
+}
+
+/* ---- Do Not Disturb ---- */
+.widget-dnd {
+  background-color: alpha(@surface0, 0.5);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.widget-dnd > label,
+.widget-dnd label {
+  font-size: 15px;
+  font-weight: 600;
+  color: @text;
+}
+
+/* ---- Media player (mpris) ---- */
+.widget-mpris {
+  background-color: alpha(@surface0, 0.5);
+  border-radius: 18px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.widget-mpris-player {
+  padding: 4px;
+}
+.widget-mpris image {
+  border-radius: 14px;
+  -gtk-icon-size: 64px;
+}
+.widget-mpris label {
+  color: @text;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.widget-mpris button {
+  background-color: alpha(@surface1, 0.7);
+  color: @text;
+  border-radius: 999px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  margin: 0 3px;
+  border: none;
+}
+.widget-mpris button:hover {
+  background-image: linear-gradient(135deg, @mauve, @blue);
+  color: @crust;
+}
+
+/* ---- Volume / Backlight sliders ---- */
+.widget-volume,
+.widget-backlight {
+  background-color: alpha(@surface0, 0.5);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.widget-volume label,
+.widget-backlight label {
+  color: @subtext1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+scale {
+  margin: 6px 4px;
+}
+scale trough {
+  background-color: alpha(@surface2, 0.5);
+  border-radius: 999px;
+  min-height: 10px;
+}
+scale highlight {
+  background-image: linear-gradient(90deg, @mauve, @blue);
+  border-radius: 999px;
+  min-height: 10px;
+}
+scale slider {
+  background-color: @text;
+  border-radius: 999px;
+  min-width: 18px;
+  min-height: 18px;
+  margin: -5px;
+  box-shadow: 0 2px 6px alpha(@crust, 0.5);
+}
+scale slider:hover {
+  background-color: @lavender;
+}
+
+/* ---- Buttons grid (quick toggles) ---- */
+.widget-buttons-grid {
+  margin-bottom: 8px;
+}
+.widget-buttons-grid button {
+  background-color: alpha(@surface0, 0.6);
+  color: @text;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 10px;
+  border: 1px solid alpha(@mauve, 0.12);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.widget-buttons-grid button:hover {
+  border-color: alpha(@mauve, 0.4);
+}
+.widget-buttons-grid button:checked {
+  background-image: linear-gradient(135deg, @mauve, @blue);
+  color: @crust;
+  border-color: transparent;
+}
+
+/* ---- Menubar widget (dropdown + buttons) ---- */
+.widget-menubar button,
+.widget-menubar menubutton {
+  background-color: alpha(@surface0, 0.6);
+  color: @text;
+  border-radius: 14px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+.widget-menubar button:hover {
+  border-color: alpha(@mauve, 0.4);
+}
+popover {
+  background-color: alpha(@mantle, 0.92);
+  border-radius: 16px;
+  border: 1px solid alpha(@mauve, 0.25);
+}
+popover contents {
+  background: transparent;
+  padding: 6px;
+}
+
+/* ---- Switches (used in DND, toggles) ---- */
+switch {
+  background-color: alpha(@surface2, 0.8);
+  border-radius: 999px;
+  min-width: 46px;
+  min-height: 26px;
+  border: none;
+}
+switch:checked {
+  background-image: linear-gradient(135deg, @mauve, @blue);
+}
+switch slider {
+  background-color: @text;
+  border-radius: 999px;
+  margin: 2px;
+  box-shadow: 0 2px 4px alpha(@crust, 0.4);
+}
+
+/* ---- Generic fallback for any plain buttons ---- */
+button {
+  outline: none;
+}
+button:focus {
+  outline: none;
+}

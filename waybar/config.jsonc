@@ -123,14 +123,14 @@
     "interval": 1,
     "spacing": 1,
     "max-length": 28,
-    "on-click": "/home/fahad/.config/waybar/scripts/network-menu.sh",
-    "on-click-right": "/home/fahad/.config/waybar/scripts/network-toggle.sh"
+    "on-click": "/home/fahad/.config/waybar/scripts/network-toggle.sh",
+    "on-click-right": "/home/fahad/.config/waybar/scripts/network-menu.sh"
   },
   "battery": {
     "format": "{icon}",
-    "format-discharging": "{icon}",
-    "format-charging": "\udb80\udc84",
-    "format-plugged": "\uf1e6",
+    "format-discharging": "{icon}{capacity}%",
+    "format-charging": "\udb80\udc84{capacity}%",
+    "format-plugged": "\uf1e6{capacity}%",
     "format-icons": {
       "charging": [
         "\udb82\udc9c",
@@ -166,7 +166,6 @@
     "tooltip-format-charging": "{timeTo}\nInput {power:>1.1f}W\nCharge {capacity}%\nHealth {health}%\nCycles {cycles}",
     "tooltip-format-full": "Battery full\nHealth {health}%\nCycles {cycles}",
     "interval": 10,
-    "max-length": 1,
     "on-click": "/home/fahad/.config/waybar/scripts/power-profile-menu.sh",
     "states": {
       "warning": 25,

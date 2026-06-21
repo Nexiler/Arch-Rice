@@ -8,3 +8,8 @@
 !kitty/**
 !nvim/
 !nvim/**
+!swaync/
+!swaync/**
+!rofi/
+!rofi/**
+
